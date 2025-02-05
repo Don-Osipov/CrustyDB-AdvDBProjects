@@ -1,37 +1,34 @@
 ## Summary of [Paper Title]
 
 ### Authors
-- **Author 1**, **Author 2**, ..., **Author n**  
-- Published in: [Conference Name], [Year]
+- **Michael Freitag**, **Alfons Kemper**,**Thomas Neumann**  
+- Published in: PVLDB, 15(11): 2797 - 2810, 2022.
 
 ### Overview
-- This paper addresses [brief summary of the problem/topic being explored]. The authors propose [solution/approach], which aims to [main goal or benefit].
+The paper centers around a hybrid database system, nearing in-memory performance without as many drawbacks. The authors propose a MVCC system that stores versioning information in memory, achieving high performance and more scalability than full in-memory systems.
 
 ### Key Contributions
-1. **Problem Definition**: [Short description of the problem addressed in the paper].
-2. **Proposed Methodology**: [Briefly explain the methodology/technique introduced].
-3. **Results**: [Summarize key findings or experiments performed].
-4. **Impact**: [How does this work contribute to the field? What are its implications?]
-5. **Opportunities**: [How do you think this paper could have been improved technically? What interesting questions are open?]
+1. **Problem Definition**: Current databses systems are either in-memory with high performance but size limitations, or disk-based, which have low performance.
+2. **Proposed Methodology**: High-speed disks supplemented with in-memory versioning data, with lightweight fallback process for large write transactions.
+3. **Results**: Up to 9.2x faster than postgres and 27.6x faster than a commercial disk-based database.
+4. **Impact**: Shows the value of hybrid approches, allowing disk-based systems to get near in-memory performance will still retaining the scalability of disk-based
+5. **Opportunities**: Only tests TATP/TPCC workloads through benchmarks. Could extend testing to include other, more diverse benchmarks. What happens if the database is spread across multiple servers?
 
 ### Methodology
-- The authors use [method, e.g., machine learning algorithms, theoretical analysis, experimental setup, etc.].
-- Key steps:
-  1. [Step 1: Overview of method]
-  2. [Step 2: Explanation]
-  3. [Step 3: Outcome/result]
+Uses buffer manager to maintain mapping between logical data objects and in-memory versioning data, so that only the newest data version goes to disk.
+Lightweight backup process for large transactions by storing simple flags in database pages instead of full version history
+Get outcome by testing the system by comparing performance against other databases
 
 ### Results and Evaluation
-- The results show that [describe key results or findings].
-- Evaluations were performed using [data sets, benchmarks, metrics], demonstrating that [summary of findings].
+The authors system achieves up to 9.2x faster than postgres and 27.6x faster than a commercial disk-based database.
+Evaluations were performed using TATP and TPCC benchmarks with various load sizes, thread counts, and data sizes, showing that the system maintains high performance even when datasets are larger than RAM storage and during concurrent bulk tranasactions.
 
 ### Conclusion
-- The paper concludes that [main takeaway]. This approach could lead to [future work, impact, or potential applications].
-
+Memory optimized disk-based systems can offer very good performance while maintaining the ability to handle large datasets. This suggests that it is possible next step for database system design.
 ### Key Takeaways
-- [Key concept or idea to remember]
-- [Potential applications in real-world scenarios or other fields]
-- [Important lessons on research methodology, evaluation, etc.]
-
+System design should keep in mind the most comomon workloads. In this case, the authors saw that most transactions were small and reads, so the system works great for those. Then they covered the less-common cases.
+Limited growth in RAM size suggests that the issues of pure in-memory systems will not likely be resolved, and hybrid solutions will continue being relevant.
+Its important to look at evaluation and benchmarks carefully. The authors say that they get 18.8x max performance over an pure in-memory system but the one they chose had lower performance than standard.
 ### Parts You Could Not Understand
- - [Any part of the paper that was outside of what you could understand]
+The details of how the hybrid mutex implementation works for their locking mechanism
+How can reads traverse version chains without latching and still maintaining correctness
